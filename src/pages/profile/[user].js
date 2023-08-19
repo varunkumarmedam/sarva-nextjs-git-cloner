@@ -11,13 +11,17 @@ import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 import Pagination from "@/components/pagination";
 import ReactPaginate from "react-paginate";
+import Link from "next/link";
+import { BarLoader } from "react-spinners";
+import BackButton from "@/components/BackButton";
 
 const UserProfile = () => {
   const [userData, setUserData] = useState({});
   const [reposData, setReposData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isReposLoading, setIsReposLoading] = useState(true);
-  const activePage = useRef(1);
+  const [activePage, setActivePage] = useState(0);
+
   const router = useRouter();
   const { user } = router.query;
 
@@ -29,26 +33,27 @@ const UserProfile = () => {
     setUserData(data);
   }
 
-  async function getRepos() {
+  async function getRepos(page) {
     setIsReposLoading(true);
     const response = await fetch(
-      `https://api.github.com/users/${user}/repos?per_page=6&page=${activePage.current}`
+      `https://api.github.com/users/${user}/repos?per_page=6&page=${page + 1}`
     );
     const data = await response.json();
-    setIsReposLoading(true);
+    setIsReposLoading(false);
     setReposData(data);
   }
 
   useEffect(() => {
-    if (user !== undefined) getUserData(), getRepos();
+    if (user !== undefined) getUserData(), getRepos(activePage);
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center p-14">
+    <div className="p-14">
+      <BackButton name={"Dashboard"} path={"/"}></BackButton>
       {isLoading ? (
         <p>Loading..</p>
       ) : (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col w-full items-center">
           <img className="rounded-full h-200" src={userData.avatar_url}></img>
           <div>{userData.name}</div>
           <div>{userData.bio}</div>
@@ -84,14 +89,38 @@ const UserProfile = () => {
               {userData.public_gists}
             </div>
           </div>
-          <div className="flex flex-wrap">
-          {reposData.map((repo) => {
-            return (
-                <div className="sm:w-1/2 lg:w-1/3 p-4 bg-gray-200">{repo.name}</div>
-            );
-          })}
+          {isReposLoading && (
+            <BarLoader
+              color={"#fff"} // Color of the progress bar
+              loading={true}
+              width={100} // Width of the progress bar
+              height={8} // Height of the progress bar
+            />
+          )}
+          <div className="flex flex-wrap w-full">
+            {reposData.map((repo) => {
+              return (
+                <Link
+                  className="sm:w-1/2 lg:w-1/3 p-4 bg-gray-200"
+                  href={`${user}/` + repo.name}
+                >
+                  <div>{repo.name}</div>
+                </Link>
+              );
+            })}
           </div>
-          <Pagination steppers={10} activePage={1}></Pagination>
+          {userData.public_repos > 6 && (
+            <Pagination
+              steppers={userData.public_repos}
+              activePage={activePage}
+              onBtnClk={(val) => {
+                if (val !== activePage) {
+                  setActivePage(val);
+                  getRepos(val);
+                }
+              }}
+            ></Pagination>
+          )}
           <Tooltip id="my-tooltip" />
         </div>
       )}
