@@ -1,7 +1,13 @@
 import BarChart from "@/components/BarChart";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { UserIcon } from "@heroicons/react/24/outline";
+import {
+  CalendarIcon,
+  EyeIcon,
+  StarIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import BackButton from "@/components/BackButton";
 
 const RepoInfo = () => {
   const [repoData, setRepoData] = useState({});
@@ -29,7 +35,8 @@ const RepoInfo = () => {
 
     // Preparing chart data
     const langBytes = Object.values(response[2]);
-    const totalBytes = langBytes.reduce((prev, curr) => prev + curr);
+    const totalBytes =
+      langBytes ?? langBytes.reduce((prev, curr) => prev + curr);
     const cData = {
       labels: Object.keys(response[2]),
       datasets: [
@@ -87,47 +94,91 @@ const RepoInfo = () => {
       {isLoading ? (
         <p>loading..</p>
       ) : (
-        <div className=" p-14">
-          <div className="border fixed left-0 border-white-200 p-10 m-5 w-1/2">
-            <div className="">{repo}</div>
-            <div className="">{repoData.meta.description}</div>
-            <div className="flex">
-              <div>Stars : {repoData.meta.stargazers_count}</div>
-              <div>Watching : {repoData.meta.watchers_count}</div>
-              <div>Issues: {repoData.meta.open_issues_count}</div>
+        <div className="p-14">
+          <BackButton name="Profile" path={`/profile/${user}`}></BackButton>
+
+          <div className="border fixed left-0 border-white-200 mt-20 ml-10 p-10 w-1/2 shadow-md shadow-gray-400">
+            <div className="text-3xl mb-3">{repo}</div>
+            <div className="text-xl mb-3">{repoData.meta.description}</div>
+            <div className="flex mb-5">
+              <div className="flex border border-white-2 p-3 mr-3 shadow-md shadow-gray-400">
+                <StarIcon className="h-6 w-6 mr-3"></StarIcon>
+                {repoData.meta.stargazers_count}
+              </div>
+              <div className="flex border border-white-2 p-3 mr-3 shadow-md shadow-gray-400">
+                <EyeIcon className="h-6 w-6 mr-3"></EyeIcon>
+                {repoData.meta.watchers_count}
+              </div>
+              <div className="flex border border-white-2 p-3 mr-3 shadow-md shadow-gray-400">
+                Issues: {repoData.meta.open_issues_count}
+              </div>
             </div>
-            <div className="flex">
-              <UserIcon className="h-6 w-6"></UserIcon>
+            <div className="flex mb-3">
+              <UserIcon className="h-6 w-6 mr-1"></UserIcon>
               {repoData.meta.owner?.login}
             </div>
-            <div className="max-h-20 overflow-y-auto">
-              {repoData.branches.map((branch) => {
+
+            <div className="mb-3 flex">
+              <CalendarIcon className="h-6 w-6 mr-2"></CalendarIcon>
+              {repoData.meta.created_at}
+            </div>
+
+            <div className="h-200 mt-5">
+              {chartData.labels.length ? (
+                <BarChart data={chartData} />
+              ) : (
+                "No languages detected"
+              )}
+            </div>
+          </div>
+
+          <div className="w-2/5 right-0 absolute">
+            <div className="border fixed border-white p-3 mr-10 bg-black">
+              Branches ({repoData.branches.length})
+              <div className="max-h-20 overflow-y-auto">
+                {repoData.branches.map((branch) => {
+                  return (
+                    <div className="inline-block bg-gray-800 text-white rounded-full px-3 py-1 mr-1 text-xs">
+                      {branch.name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-20 pt-20 mr-10">
+              <div className="text-xl mb-3">
+                Commit History of default branch
+              </div>
+
+              {repoData.commits.map((commit, index) => {
                 return (
-                  <div className="inline-block bg-red-300 text-white rounded-full px-2 py-1 text-xs">
-                    {branch.name}
+                  <div className="flex flex-col border border-white-2 p-3 mr-3 shadow-md shadow-gray-400 mb-5">
+                    <div className="flex items-center">
+                      <div className="border px-2 py-1 mr-3">#{index}</div>
+                      <div className="flex">
+                        <UserIcon className="h-6 w-6 mr-2"></UserIcon>
+                        {commit.commit.author.name}
+                      </div>
+                    </div>
+
+                    <div className="mt-3">
+                      <div>{commit.commit.message}</div>
+                      <div>
+                        {new Date(commit.commit.author.date).toDateString() +
+                          ", " +
+                          new Date(
+                            commit.commit.author.date
+                          ).toLocaleTimeString("en-US", {
+                            timeZoneName: "short",
+                          })}
+                      </div>
+                    </div>
+                    <div></div>
                   </div>
                 );
               })}
             </div>
-            <div>{repoData.meta.created_at}</div>
-            {<BarChart data={chartData} />}
-          </div>
-
-          <div className="w-1/2 right-0 absolute p-20">
-            commits history
-            {repoData.commits.map((commit, index) => {
-              return (
-                <div className="flex">
-                  <div>#{index}</div>
-                  <div>
-                    {commit.commit.author.name}
-                    <div>{commit.commit.message}</div>
-                    <div>{commit.commit.author.date}</div>
-                  </div>
-                  <div></div>
-                </div>
-              );
-            })}
           </div>
         </div>
       )}

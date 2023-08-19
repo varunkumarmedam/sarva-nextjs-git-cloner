@@ -6,8 +6,10 @@ const Pagination = ({ steppers, activePage, onBtnClk }) => {
       <button
         type="button"
         onClick={() => onBtnClk(i)}
-        className={`border p-5 ${
-          i == activePage ? "bg-white text-black" : "border-blue-300"
+        className={`border p-3 ${
+          i == activePage
+            ? "bg-gray-500 text-white shadow-md shadow-gray-400"
+            : "border-white-100"
         }`}
         key={i}
       >

@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowRightIcon,
+  BookmarkSquareIcon,
+  BookOpenIcon,
   CodeBracketSquareIcon,
   MapIcon,
   MapPinIcon,
@@ -55,37 +58,37 @@ const UserProfile = () => {
       ) : (
         <div className="flex flex-col w-full items-center">
           <img className="rounded-full h-200" src={userData.avatar_url}></img>
-          <div>{userData.name}</div>
-          <div>{userData.bio}</div>
+          <div className="text-4xl mt-3 mb-3">{userData.name}</div>
+          <div className="text-xl mb-2">{userData.bio}</div>
           {userData.location && (
-            <div className="flex">
+            <div className="flex mb-2">
               <MapPinIcon className="h-6 w-6" /> {userData.location}
             </div>
           )}
 
-          <div className="flex">
+          <div className="flex mb-3">
             <div
-              className="flex"
+              className="flex border border-white-2 p-3 mr-3 shadow-md shadow-gray-400"
               data-tooltip-id="my-tooltip"
               data-tooltip-content="Followers"
             >
-              <UsersIcon className="h-6 w-6" />
+              <UsersIcon className="h-6 w-6 mr-2" />
               {userData.followers}
             </div>
             <div
-              className="flex"
+              className="flex border border-white-2 p-3 mr-3 shadow-md shadow-gray-400"
               data-tooltip-id="my-tooltip"
               data-tooltip-content="Following"
             >
-              <UserPlusIcon className="h-6 w-6" />
+              <UserPlusIcon className="h-6 w-6 mr-2" />
               {userData.following}
             </div>
             <div
-              className="flex"
+              className="flex border border-white-2 p-3 shadow-md shadow-gray-400"
               data-tooltip-id="my-tooltip"
               data-tooltip-content="Public Gists"
             >
-              <CodeBracketSquareIcon className="h-6 w-6" />
+              <CodeBracketSquareIcon className="h-6 w-6 mr-2" />
               {userData.public_gists}
             </div>
           </div>
@@ -97,14 +100,20 @@ const UserProfile = () => {
               height={8} // Height of the progress bar
             />
           )}
-          <div className="flex flex-wrap w-full">
+          <div className="flex flex-wrap mb-10 justify-around w-full">
             {reposData.map((repo) => {
               return (
                 <Link
-                  className="sm:w-1/2 lg:w-1/3 p-4 bg-gray-200"
+                  className="sm:w-1/2 lg:w-1/4 p-4 bg-gray-800 shadow-md shadow-gray-400 mt-6 ml-1"
                   href={`${user}/` + repo.name}
                 >
-                  <div>{repo.name}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <BookmarkSquareIcon className="m-2 h-6 w-6"></BookmarkSquareIcon>
+                      {repo.name}
+                    </div>
+                    <ArrowRightIcon className="m-2 h-6 w-6"></ArrowRightIcon>
+                  </div>
                 </Link>
               );
             })}
