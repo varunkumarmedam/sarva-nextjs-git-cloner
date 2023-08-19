@@ -94,10 +94,10 @@ const RepoInfo = () => {
       {isLoading ? (
         <p>loading..</p>
       ) : (
-        <div className="p-14">
+        <div className="lg:p-14">
           <BackButton name="Profile" path={`/profile/${user}`}></BackButton>
 
-          <div className="border fixed left-0 border-white-200 mt-20 ml-10 p-10 w-1/2 shadow-md shadow-gray-400">
+          <div className="border lg:fixed left-0 border-white-200 mt-20 lg:mx-10 p-10 lg:w-1/2 shadow-md shadow-gray-400">
             <div className="text-3xl mb-3">{repo}</div>
             <div className="text-xl mb-3">{repoData.meta.description}</div>
             <div className="flex mb-5">
@@ -132,8 +132,8 @@ const RepoInfo = () => {
             </div>
           </div>
 
-          <div className="w-2/5 right-0 absolute">
-            <div className="border fixed border-white p-3 mr-10 bg-black">
+          <div className="lg:w-2/5 right-0 lg:absolute">
+            <div className="mt-10 lg:fixed lg:mx-10 border border-white p-3 bg-black">
               Branches ({repoData.branches.length})
               <div className="max-h-20 overflow-y-auto">
                 {repoData.branches.map((branch) => {
@@ -146,7 +146,7 @@ const RepoInfo = () => {
               </div>
             </div>
 
-            <div className="mt-20 pt-20 mr-10">
+            <div className="mt-10 lg:mt-20 lg:pt-20 lg:mx-10">
               <div className="text-xl mb-3">
                 Commit History of default branch
               </div>

@@ -9,7 +9,7 @@ const BackButton = ({ name, path }) => {
   }
   return (
     <button
-      className="fixed float-left border border-white-10 shadow-md shadow-gray-400"
+      className="fixed float-left border border-white-10 shadow-md shadow-gray-400 bg-black"
       onClick={goTo}
     >
       <div className="flex items-center justify-center p-1 pr-5">
